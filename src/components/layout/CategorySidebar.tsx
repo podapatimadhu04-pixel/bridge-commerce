@@ -5,11 +5,11 @@ import { cn } from "@/lib/utils";
 
 const items = [
   { to: "/", label: "browse", icon: Building2, exact: true },
-  { to: "/restaurants", label: "restaurants", icon: UtensilsCrossed },
-  { to: "/groceries", label: "groceries", icon: ShoppingBasket },
-  { to: "/electronics", label: "electronics", icon: Cpu },
-  { to: "/track", label: "track_order", icon: Truck },
-  { to: "/vendor", label: "vendor_onboard", icon: Package },
+  { to: "/restaurants", label: "restaurants", icon: UtensilsCrossed, exact: false },
+  { to: "/groceries", label: "groceries", icon: ShoppingBasket, exact: false },
+  { to: "/electronics", label: "electronics", icon: Cpu, exact: false },
+  { to: "/track", label: "track_order", icon: Truck, exact: false },
+  { to: "/vendor", label: "vendor_onboard", icon: Package, exact: false },
 ] as const;
 
 export function CategorySidebar() {
