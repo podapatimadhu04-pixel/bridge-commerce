@@ -11,10 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VendorRouteImport } from './routes/vendor'
 import { Route as TrackRouteImport } from './routes/track'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as RestaurantsRouteImport } from './routes/restaurants'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as GroceriesRouteImport } from './routes/groceries'
 import { Route as ElectronicsRouteImport } from './routes/electronics'
 import { Route as CartRouteImport } from './routes/cart'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 
 const VendorRoute = VendorRouteImport.update({
@@ -27,9 +31,19 @@ const TrackRoute = TrackRouteImport.update({
   path: '/track',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RestaurantsRoute = RestaurantsRouteImport.update({
   id: '/restaurants',
   path: '/restaurants',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GroceriesRoute = GroceriesRouteImport.update({
@@ -47,6 +61,16 @@ const CartRoute = CartRouteImport.update({
   path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -55,29 +79,41 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/electronics': typeof ElectronicsRoute
   '/groceries': typeof GroceriesRoute
+  '/privacy': typeof PrivacyRoute
   '/restaurants': typeof RestaurantsRoute
+  '/terms': typeof TermsRoute
   '/track': typeof TrackRoute
   '/vendor': typeof VendorRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/electronics': typeof ElectronicsRoute
   '/groceries': typeof GroceriesRoute
+  '/privacy': typeof PrivacyRoute
   '/restaurants': typeof RestaurantsRoute
+  '/terms': typeof TermsRoute
   '/track': typeof TrackRoute
   '/vendor': typeof VendorRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/electronics': typeof ElectronicsRoute
   '/groceries': typeof GroceriesRoute
+  '/privacy': typeof PrivacyRoute
   '/restaurants': typeof RestaurantsRoute
+  '/terms': typeof TermsRoute
   '/track': typeof TrackRoute
   '/vendor': typeof VendorRoute
 }
@@ -85,38 +121,54 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
+    | '/auth'
     | '/cart'
     | '/electronics'
     | '/groceries'
+    | '/privacy'
     | '/restaurants'
+    | '/terms'
     | '/track'
     | '/vendor'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
+    | '/auth'
     | '/cart'
     | '/electronics'
     | '/groceries'
+    | '/privacy'
     | '/restaurants'
+    | '/terms'
     | '/track'
     | '/vendor'
   id:
     | '__root__'
     | '/'
+    | '/account'
+    | '/auth'
     | '/cart'
     | '/electronics'
     | '/groceries'
+    | '/privacy'
     | '/restaurants'
+    | '/terms'
     | '/track'
     | '/vendor'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
+  AuthRoute: typeof AuthRoute
   CartRoute: typeof CartRoute
   ElectronicsRoute: typeof ElectronicsRoute
   GroceriesRoute: typeof GroceriesRoute
+  PrivacyRoute: typeof PrivacyRoute
   RestaurantsRoute: typeof RestaurantsRoute
+  TermsRoute: typeof TermsRoute
   TrackRoute: typeof TrackRoute
   VendorRoute: typeof VendorRoute
 }
@@ -137,11 +189,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/restaurants': {
       id: '/restaurants'
       path: '/restaurants'
       fullPath: '/restaurants'
       preLoaderRoute: typeof RestaurantsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/groceries': {
@@ -165,6 +231,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -177,10 +257,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
+  AuthRoute: AuthRoute,
   CartRoute: CartRoute,
   ElectronicsRoute: ElectronicsRoute,
   GroceriesRoute: GroceriesRoute,
+  PrivacyRoute: PrivacyRoute,
   RestaurantsRoute: RestaurantsRoute,
+  TermsRoute: TermsRoute,
   TrackRoute: TrackRoute,
   VendorRoute: VendorRoute,
 }
