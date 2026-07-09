@@ -88,11 +88,29 @@ function CartPage() {
           <Button
             className="mt-6 w-full"
             size="lg"
-            onClick={() => {
-              const id = `OM-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+            onClick={async () => {
+              if (!user) {
+                toast.info("Sign in to place and track your order");
+                navigate({ to: "/auth" });
+                return;
+              }
+              const code = `OM-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+              const { error } = await supabase.from("orders").insert({
+                user_id: user.id,
+                code,
+                status: "placed",
+                subtotal_usd: subtotalUsd.toFixed(2),
+                shipping_usd: shipping.toFixed(2),
+                tax_usd: tax.toFixed(2),
+                total_usd: total.toFixed(2),
+                items: detailed.map(({ product, qty, lineUsd }) => ({
+                  productId: product.id, name: product.name, qty, lineUsd,
+                })),
+              });
+              if (error) return toast.error(error.message);
               clear();
-              toast.success(`${t("order_placed")} · ${id}`);
-              navigate({ to: "/track", search: { id } });
+              toast.success(`${t("order_placed")} · ${code}`);
+              navigate({ to: "/track", search: { id: code } });
             }}
           >
             {t("checkout")}
