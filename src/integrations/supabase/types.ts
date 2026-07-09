@@ -14,7 +14,185 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      addresses: {
+        Row: {
+          city: string
+          country_code: string
+          created_at: string
+          id: string
+          is_default: boolean
+          label: string | null
+          lat: number | null
+          line1: string
+          line2: string | null
+          lng: number | null
+          phone: string | null
+          postal_code: string | null
+          recipient_name: string
+          region: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          city: string
+          country_code: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          label?: string | null
+          lat?: number | null
+          line1: string
+          line2?: string | null
+          lng?: number | null
+          phone?: string | null
+          postal_code?: string | null
+          recipient_name: string
+          region?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          city?: string
+          country_code?: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          label?: string | null
+          lat?: number | null
+          line1?: string
+          line2?: string | null
+          lng?: number | null
+          phone?: string | null
+          postal_code?: string | null
+          recipient_name?: string
+          region?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      consent_events: {
+        Row: {
+          analytics: boolean
+          anon_key: string | null
+          created_at: string
+          id: string
+          marketing: boolean
+          necessary: boolean
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          analytics?: boolean
+          anon_key?: string | null
+          created_at?: string
+          id?: string
+          marketing?: boolean
+          necessary?: boolean
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          analytics?: boolean
+          anon_key?: string | null
+          created_at?: string
+          id?: string
+          marketing?: boolean
+          necessary?: boolean
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          address_id: string | null
+          code: string
+          created_at: string
+          currency: string
+          id: string
+          items: Json
+          shipping_usd: number
+          status: string
+          subtotal_usd: number
+          tax_usd: number
+          total_usd: number
+          user_id: string
+        }
+        Insert: {
+          address_id?: string | null
+          code: string
+          created_at?: string
+          currency?: string
+          id?: string
+          items?: Json
+          shipping_usd?: number
+          status?: string
+          subtotal_usd?: number
+          tax_usd?: number
+          total_usd?: number
+          user_id: string
+        }
+        Update: {
+          address_id?: string | null
+          code?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          items?: Json
+          shipping_usd?: number
+          status?: string
+          subtotal_usd?: number
+          tax_usd?: number
+          total_usd?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_address_id_fkey"
+            columns: ["address_id"]
+            isOneToOne: false
+            referencedRelation: "addresses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          marketing_opt_in: boolean
+          phone: string | null
+          preferred_currency: string | null
+          preferred_lang: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          marketing_opt_in?: boolean
+          phone?: string | null
+          preferred_currency?: string | null
+          preferred_lang?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          marketing_opt_in?: boolean
+          phone?: string | null
+          preferred_currency?: string | null
+          preferred_lang?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
