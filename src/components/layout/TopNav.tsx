@@ -21,6 +21,7 @@ const LOCATIONS = [
 export function TopNav() {
   const { lang, setLang, currency, setCurrency, location, setLocation, t } = useLocale();
   const { count } = useCart();
+  const { user } = useAuth();
   const [q, setQ] = useState("");
 
   const langLabel = LANGUAGES.find((l) => l.code === lang)!;
