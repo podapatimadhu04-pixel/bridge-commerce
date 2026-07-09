@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Globe, MapPin, ShoppingCart, Store, Search, Menu } from "lucide-react";
+import { Globe, MapPin, ShoppingCart, Store, Search, Menu, User as UserIcon, LogOut } from "lucide-react";
 import { CURRENCIES, LANGUAGES, useLocale, type Currency, type Lang } from "@/lib/i18n";
 import { useCart } from "@/lib/cart";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
   DropdownMenuSeparator, DropdownMenuTrigger,
