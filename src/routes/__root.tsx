@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { LocaleProvider } from "@/lib/i18n";
 import { CartProvider } from "@/lib/cart";
+import { AuthProvider } from "@/hooks/use-auth";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -105,12 +106,14 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <LocaleProvider>
-        <CartProvider>
-          <Outlet />
-          <Toaster position="top-right" richColors />
-        </CartProvider>
-      </LocaleProvider>
+      <AuthProvider>
+        <LocaleProvider>
+          <CartProvider>
+            <Outlet />
+            <Toaster position="top-right" richColors />
+          </CartProvider>
+        </LocaleProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
