@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Globe, MapPin, ShoppingCart, Store, Search, Menu } from "lucide-react";
+import { Globe, MapPin, ShoppingCart, Store, Search, Menu, User as UserIcon, LogOut } from "lucide-react";
 import { CURRENCIES, LANGUAGES, useLocale, type Currency, type Lang } from "@/lib/i18n";
 import { useCart } from "@/lib/cart";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
   DropdownMenuSeparator, DropdownMenuTrigger,
@@ -19,6 +21,7 @@ const LOCATIONS = [
 export function TopNav() {
   const { lang, setLang, currency, setCurrency, location, setLocation, t } = useLocale();
   const { count } = useCart();
+  const { user } = useAuth();
   const [q, setQ] = useState("");
 
   const langLabel = LANGUAGES.find((l) => l.code === lang)!;
@@ -91,6 +94,32 @@ export function TopNav() {
           <Button asChild variant="ghost" size="sm" className="hidden md:inline-flex">
             <Link to="/vendor">{t("vendor_onboard")}</Link>
           </Button>
+
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-1.5">
+                  <UserIcon className="h-4 w-4" />
+                  <span className="hidden max-w-[8rem] truncate sm:inline">{user.email}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>Signed in</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild><Link to="/account">Account & orders</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/privacy">Privacy & data</Link></DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => supabase.auth.signOut()}>
+                  <LogOut className="mr-2 h-4 w-4" /> Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button asChild variant="ghost" size="sm" className="gap-1.5">
+              <Link to="/auth"><UserIcon className="h-4 w-4" /><span className="hidden sm:inline">Sign in</span></Link>
+            </Button>
+          )}
+
 
           <Button asChild variant="ghost" size="sm" className="relative">
             <Link to="/cart" className="flex items-center gap-1.5">
