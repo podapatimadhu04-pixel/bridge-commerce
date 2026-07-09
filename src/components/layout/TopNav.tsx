@@ -95,6 +95,32 @@ export function TopNav() {
             <Link to="/vendor">{t("vendor_onboard")}</Link>
           </Button>
 
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-1.5">
+                  <UserIcon className="h-4 w-4" />
+                  <span className="hidden max-w-[8rem] truncate sm:inline">{user.email}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>Signed in</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild><Link to="/account">Account & orders</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/privacy">Privacy & data</Link></DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => supabase.auth.signOut()}>
+                  <LogOut className="mr-2 h-4 w-4" /> Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button asChild variant="ghost" size="sm" className="gap-1.5">
+              <Link to="/auth"><UserIcon className="h-4 w-4" /><span className="hidden sm:inline">Sign in</span></Link>
+            </Button>
+          )}
+
+
           <Button asChild variant="ghost" size="sm" className="relative">
             <Link to="/cart" className="flex items-center gap-1.5">
               <ShoppingCart className="h-4 w-4" />
