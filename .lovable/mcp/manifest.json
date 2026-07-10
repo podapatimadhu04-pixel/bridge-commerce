@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.1",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://nvdvqbcirskvntpoqytd.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "orbitmarket-mcp",
+      "version": "0.1.0",
+      "title": "OrbitMarket"
+    },
+    "tools": [
+      {
+        "name": "browse_products",
+        "title": "Browse products",
+        "description": "Search OrbitMarket's public catalog of restaurants, groceries, and wholesale electronics. Filter by kind, category, or free-text query.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "description": "Free-text search over name/description/vendor.",
+              "type": "string"
+            },
+            "kind": {
+              "description": "Product kind filter.",
+              "type": "string",
+              "enum": [
+                "food",
+                "grocery",
+                "electronics"
+              ]
+            },
+            "category": {
+              "description": "Category filter (e.g. 'Air Conditioners').",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max results, default 20.",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_orders",
+        "title": "List my orders",
+        "description": "List the signed-in user's OrbitMarket orders, newest first.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "limit": {
+              "description": "Max orders to return, default 10.",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_addresses",
+        "title": "List my delivery addresses",
+        "description": "List the signed-in user's saved delivery addresses.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_my_profile",
+        "title": "Get my profile",
+        "description": "Return the signed-in user's OrbitMarket profile (name, avatar, and basic account info).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
