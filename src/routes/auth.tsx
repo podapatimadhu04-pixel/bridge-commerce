@@ -34,22 +34,25 @@ const passwordSchema = z.string().min(8, "At least 8 characters").max(72);
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const returnTo = next ? `${window.location.origin}${next}` : window.location.origin;
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/account" });
+      if (data.session) goNext(navigate, next);
     });
-  }, [navigate]);
+  }, [navigate, next]);
 
   const google = async () => {
     setLoading(true);
-    const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: returnTo });
     if (res.error) { toast.error(res.error.message); setLoading(false); return; }
-    if (!res.redirected) navigate({ to: "/account" });
+    if (!res.redirected) goNext(navigate, next);
   };
 
   const signIn = async (e: React.FormEvent) => {
@@ -63,7 +66,7 @@ function AuthPage() {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Welcome back");
-    navigate({ to: "/account" });
+    goNext(navigate, next);
   };
 
   const signUp = async (e: React.FormEvent) => {
@@ -77,14 +80,14 @@ function AuthPage() {
       email: em.data,
       password: pw.data,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: returnTo,
         data: { full_name: name.trim().slice(0, 100) || em.data },
       },
     });
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Account created");
-    navigate({ to: "/account" });
+    goNext(navigate, next);
   };
 
   return (
