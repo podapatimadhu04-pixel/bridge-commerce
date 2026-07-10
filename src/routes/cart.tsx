@@ -20,6 +20,7 @@ function CartPage() {
   const { detailed, subtotalUsd, setQty, remove, clear, count } = useCart();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const submitOrder = useServerFn(placeOrder);
 
   const shipping = subtotalUsd > 0 ? Math.max(4.99, subtotalUsd * 0.03) : 0;
   const tax = subtotalUsd * 0.08;
