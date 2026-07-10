@@ -12,6 +12,9 @@ import { z } from "zod";
 import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    next: typeof s.next === "string" && s.next.startsWith("/") && !s.next.startsWith("//") ? s.next : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Sign in — OrbitMarket" },
@@ -20,6 +23,11 @@ export const Route = createFileRoute("/auth")({
   }),
   component: AuthPage,
 });
+
+function goNext(navigate: ReturnType<typeof useNavigate>, next: string | undefined) {
+  if (next) window.location.href = next;
+  else navigate({ to: "/account" });
+}
 
 const emailSchema = z.string().trim().email({ message: "Enter a valid email" }).max(255);
 const passwordSchema = z.string().min(8, "At least 8 characters").max(72);
