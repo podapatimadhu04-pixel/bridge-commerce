@@ -49,7 +49,10 @@ export const placeOrder = createServerFn({ method: "POST" })
 
     const code = `OM-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 
-    const { error } = await context.supabase.from("orders").insert({
+    // Use admin client so client-side INSERT policy can be removed; auth is
+    // already verified by requireSupabaseAuth middleware above.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("orders").insert({
       user_id: context.userId,
       code,
       status: "placed",
