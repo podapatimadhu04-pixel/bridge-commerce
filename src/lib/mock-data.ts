@@ -119,4 +119,12 @@ export const PRODUCTS: Product[] = [
   { id: "p43", vendorId: "v29", kind: "electronics", name: "Solar Panel 450W", category: "Fans", priceUsd: 125, image: img("1518770660439-4636190af475"), description: "Mono-PERC solar panel, 25-yr performance warranty.", moq: 20, bulkTiers: [{ qty: 20, priceUsd: 125 }, { qty: 100, priceUsd: 112 }, { qty: 500, priceUsd: 98 }] },
   { id: "p44", vendorId: "v30", kind: "electronics", name: "Solar Home Kit 300W", category: "Fans", priceUsd: 220, image: img("1587202372775-e229f172b9d7"), description: "Panel, inverter, battery and lights — off-grid ready.", moq: 10, bulkTiers: [{ qty: 10, priceUsd: 220 }, { qty: 50, priceUsd: 199 }] },
   { id: "p45", vendorId: "v29", kind: "electronics", name: "Washing Machine 7kg", category: "Refrigerators", priceUsd: 245, image: img("1584568694244-14fbdf83bd30"), description: "Fully-automatic top-load, inverter motor.", moq: 8, bulkTiers: [{ qty: 8, priceUsd: 245 }, { qty: 40, priceUsd: 225 }] },
+];
+
+export const CATEGORIES = {
+  food: ["Mains", "Pizza", "Ramen", "Desserts", "Drinks"],
+  grocery: ["Fresh", "Bakery", "Grains", "Dairy", "Household"],
+  electronics: ["Air Conditioners", "Refrigerators", "Coolers", "Fans", "Tube Lights", "TVs", "Water Motors"],
+};
+
 
