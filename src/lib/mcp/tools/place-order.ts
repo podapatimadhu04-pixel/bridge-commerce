@@ -110,6 +110,7 @@ export default defineTool({
         id: data.id,
         code: data.code,
         status: data.status,
+        userId: ctx.getUserId() ?? null,
         currency: data.currency,
         subtotalUsd: Number(data.subtotal_usd),
         shippingUsd: Number(data.shipping_usd),
