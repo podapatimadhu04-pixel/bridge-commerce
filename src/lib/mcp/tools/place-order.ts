@@ -88,11 +88,16 @@ export default defineTool({
 
       const code = `OM-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 
+      const userId = ctx.getUserId();
+      if (!userId) {
+        return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
+      }
+
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const { data, error } = await supabaseAdmin
         .from("orders")
         .insert({
-          user_id: ctx.getUserId(),
+          user_id: userId,
           code,
           status: "placed",
           subtotal_usd: subtotalUsd,
