@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
+import { InstallAppButton } from "@/components/InstallAppButton";
 
 const LOCATIONS = [
   "New York, US", "London, GB", "Mumbai, IN", "Tokyo, JP", "Rome, IT",
@@ -94,6 +95,8 @@ export function TopNav() {
           <Button asChild variant="ghost" size="sm" className="hidden md:inline-flex">
             <Link to="/vendor">{t("vendor_onboard")}</Link>
           </Button>
+
+          <InstallAppButton />
 
           {user ? (
             <DropdownMenu>
