@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useMemo } from "react";
-import type { Product } from "@/lib/mock-data";
+import { resolveProduct, type Product } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({ meta: [{ title: "Cart — OrbitMarket" }] }),
@@ -57,32 +57,37 @@ function computeTier(product: Product, qty: number): TierInfo {
 }
 
 function CartPage() {
-  const { t, fx } = useLocale();
+  const { t, fx, country } = useLocale();
   const { detailed, setQty, remove, clear, count } = useCart();
   const navigate = useNavigate();
   const { user } = useAuth();
   const submitOrder = useServerFn(placeOrder);
 
-  // Recompute totals + validation from tier logic
+  // Recompute totals + validation from region-resolved catalog + tier logic
   const analysis = useMemo(() => {
-    const lines = detailed.map(({ product, qty }) => {
-      const tier = computeTier(product, qty);
-      const moqShortfall = product.moq && qty < product.moq ? product.moq - qty : 0;
-      return {
-        product,
-        qty,
-        ...tier,
-        lineUsd: Number((tier.unitUsd * qty).toFixed(2)),
-        moqShortfall,
-      };
-    });
-    const subtotalUsd = Number(lines.reduce((a, l) => a + l.lineUsd, 0).toFixed(2));
+    const lines = detailed
+      .map(({ product, qty }) => ({ product: resolveProduct(product, country), qty }))
+      // If the country blocks a product mid-session, drop it from checkout
+      // math but still surface a violation so the buyer sees the reason.
+      .map(({ product, qty }) => {
+        const tier = computeTier(product, qty);
+        const moqShortfall = product.moq && qty < product.moq ? product.moq - qty : 0;
+        return {
+          product,
+          qty,
+          ...tier,
+          lineUsd: Number((tier.unitUsd * qty).toFixed(2)),
+          moqShortfall,
+          unavailable: !product.available,
+        };
+      });
+    const subtotalUsd = Number(lines.filter((l) => !l.unavailable).reduce((a, l) => a + l.lineUsd, 0).toFixed(2));
     const shippingUsd = subtotalUsd > 0 ? Number(Math.max(4.99, subtotalUsd * 0.03).toFixed(2)) : 0;
     const taxUsd = Number((subtotalUsd * 0.08).toFixed(2));
     const totalUsd = Number((subtotalUsd + shippingUsd + taxUsd).toFixed(2));
-    const violations = lines.filter((l) => l.moqShortfall > 0);
+    const violations = lines.filter((l) => l.moqShortfall > 0 || l.unavailable);
     return { lines, subtotalUsd, shippingUsd, taxUsd, totalUsd, violations };
-  }, [detailed]);
+  }, [detailed, country]);
 
   const canCheckout = analysis.violations.length === 0 && count > 0;
 
