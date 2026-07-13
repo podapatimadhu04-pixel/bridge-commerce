@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { VendorCard } from "@/components/VendorCard";
 import { ProductCard } from "@/components/ProductCard";
-import { VENDORS, PRODUCTS } from "@/lib/mock-data";
+import { VENDORS, PRODUCTS, resolveProduct } from "@/lib/mock-data";
 import { useLocale } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Globe2, Languages, Wallet, Wifi, UtensilsCrossed, ShoppingBasket, Cpu, Search } from "lucide-react";
@@ -19,10 +19,11 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const { t, location } = useLocale();
+  const { t, location, country } = useLocale();
   const featuredVendors = VENDORS.slice(0, 6);
-  const featuredElectronics = PRODUCTS.filter((p) => p.kind === "electronics").slice(0, 4);
-  const featuredFood = PRODUCTS.filter((p) => p.kind === "food").slice(0, 4);
+  const inRegion = (p: (typeof PRODUCTS)[number]) => resolveProduct(p, country).available;
+  const featuredElectronics = PRODUCTS.filter((p) => p.kind === "electronics").filter(inRegion).slice(0, 4);
+  const featuredFood = PRODUCTS.filter((p) => p.kind === "food").filter(inRegion).slice(0, 4);
 
   return (
     <AppLayout>
