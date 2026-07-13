@@ -8,7 +8,7 @@ export type GeoInfo = {
 };
 
 export const detectGeo = createServerFn({ method: "GET" }).handler(async (): Promise<GeoInfo> => {
-  const headers = getRequestHeaders();
+  const headers = getRequestHeaders() as unknown as Record<string, string | undefined>;
   const h = (k: string) => (headers[k] ?? headers[k.toLowerCase()] ?? null) as string | null;
 
   // Cloudflare Workers headers (primary), with common fallbacks.
