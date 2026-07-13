@@ -126,7 +126,7 @@ function CartPage() {
 
           <div className="divide-y rounded-2xl border bg-card shadow-soft">
             {analysis.lines.map((line) => {
-              const { product, qty, unitUsd, currentTierQty, nextTier, savingsPerUnitUsd, lineUsd, moqShortfall } = line;
+              const { product, qty, unitUsd, currentTierQty, nextTier, savingsPerUnitUsd, lineUsd, moqShortfall, unavailable } = line;
               const hasTiers = !!product.bulkTiers && product.bulkTiers.length > 0;
               return (
                 <div key={product.id} className="flex gap-4 p-4">
@@ -156,6 +156,18 @@ function CartPage() {
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
+
+                    {unavailable && (
+                      <div className="flex items-center justify-between gap-2 rounded-md border border-destructive/40 bg-destructive/5 px-2.5 py-1.5 text-xs">
+                        <span className="flex items-center gap-1.5 text-destructive">
+                          <AlertTriangle className="h-3.5 w-3.5" />
+                          Not available for delivery in your region — remove to continue.
+                        </span>
+                        <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => remove(product.id)}>
+                          Remove
+                        </Button>
+                      </div>
+                    )}
 
                     {moqShortfall > 0 && product.moq && (
                       <div className="flex items-center justify-between gap-2 rounded-md border border-destructive/40 bg-destructive/5 px-2.5 py-1.5 text-xs">
