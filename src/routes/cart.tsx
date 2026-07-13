@@ -266,7 +266,10 @@ function CartPage() {
               try {
                 const result = await submitOrder({
                   data: {
-                    lines: analysis.lines.map(({ product, qty }) => ({ productId: product.id, qty })),
+                    country: country || undefined,
+                    lines: analysis.lines
+                      .filter((l) => !l.unavailable)
+                      .map(({ product, qty }) => ({ productId: product.id, qty })),
                   },
                 });
                 clear();

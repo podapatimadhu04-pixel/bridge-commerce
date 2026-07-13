@@ -1,10 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { PRODUCTS } from "./mock-data";
+import { PRODUCTS, resolveProduct } from "./mock-data";
 
 
 const CheckoutInput = z.object({
+  country: z.string().length(2).optional(),
   lines: z
     .array(
       z.object({
@@ -30,6 +31,7 @@ export const placeOrder = createServerFn({ method: "POST" })
     // Recompute all pricing server-side from authoritative product data.
     const items: { productId: string; name: string; qty: number; unitUsd: number; lineUsd: number }[] = [];
     let subtotalUsd = 0;
+    const country = data.country ? data.country.toUpperCase() : null;
 
     // Reject duplicate lines — the client must merge them before checkout.
     const seen = new Set<string>();
@@ -41,9 +43,15 @@ export const placeOrder = createServerFn({ method: "POST" })
     }
 
     for (const line of data.lines) {
-      const product = PRODUCTS.find((p) => p.id === line.productId);
-      if (!product) {
+      const base = PRODUCTS.find((p) => p.id === line.productId);
+      if (!base) {
         throw new Error(`Unknown product: ${line.productId}`);
+      }
+      // Resolve to the region-effective product so pricing, availability and
+      // any absolute overrides are enforced server-side, not trusted from the client.
+      const product = resolveProduct(base, country);
+      if (!product.available) {
+        throw new Error(`${product.name} is not available in your region`);
       }
       if (!Number.isInteger(line.qty) || line.qty <= 0) {
         throw new Error(`Invalid quantity for ${product.name}`);
@@ -75,6 +83,7 @@ export const placeOrder = createServerFn({ method: "POST" })
       subtotalUsd += lineUsd;
       items.push({ productId: product.id, name: product.name, qty: line.qty, unitUsd: unit, lineUsd });
     }
+
 
     // Sanity cap on total order value to avoid absurd inputs slipping through.
     if (subtotalUsd > 5_000_000) {
