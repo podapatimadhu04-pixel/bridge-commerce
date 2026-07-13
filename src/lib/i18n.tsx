@@ -111,15 +111,31 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const [location, setLocation] = useState<string>("New York, US");
 
   useEffect(() => {
-    const saved = typeof window !== "undefined" ? window.localStorage.getItem("locale") : null;
+    if (typeof window === "undefined") return;
+    const saved = window.localStorage.getItem("locale");
     if (saved) {
       try {
         const p = JSON.parse(saved);
         if (p.lang) setLang(p.lang);
         if (p.currency) setCurrency(p.currency);
         if (p.location) setLocation(p.location);
+        return;
       } catch {}
     }
+    // No saved preference — detect from visitor IP (server headers).
+    detectGeo()
+      .then((geo) => {
+        if (!geo?.country) return;
+        const preset = COUNTRY_MAP[geo.country];
+        if (preset) {
+          setLang(preset.lang);
+          setCurrency(preset.currency);
+          setLocation(geo.city ? `${geo.city}, ${geo.country}` : preset.location);
+        } else if (geo.city) {
+          setLocation(`${geo.city}, ${geo.country}`);
+        }
+      })
+      .catch(() => {});
   }, []);
   useEffect(() => {
     if (typeof window !== "undefined") {
