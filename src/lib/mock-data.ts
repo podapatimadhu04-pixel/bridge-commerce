@@ -13,6 +13,13 @@ export type Vendor = {
   rural?: boolean;
 };
 
+export type RegionOverride = {
+  priceMultiplier?: number; // applied to base price + every bulk tier
+  priceUsd?: number;        // absolute override (wins over multiplier)
+  description?: string;     // localized copy for this country
+  unavailable?: boolean;    // hide product for this country
+};
+
 export type Product = {
   id: string;
   vendorId: string;
@@ -25,7 +32,12 @@ export type Product = {
   bulkTiers?: { qty: number; priceUsd: number }[];
   specs?: Record<string, string>;
   kind: "food" | "grocery" | "electronics";
+  // Country-code (ISO-2) keyed overrides. Missing key = base catalog.
+  regions?: Record<string, RegionOverride>;
+  // If set, product only ships to these countries (empty/undefined = global).
+  availableIn?: string[];
 };
+
 
 const img = (seed: string, w = 800, h = 600) =>
   `https://images.unsplash.com/photo-${seed}?auto=format&fit=crop&w=${w}&h=${h}&q=70`;
