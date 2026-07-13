@@ -206,7 +206,7 @@ const REGION_OVERRIDES: Record<string, Product["regions"]> = {
   p38: { // UHT Milk 12x1L
     AU: { priceMultiplier: 0.9, description: "Shelf-stable UHT milk for remote Outback and island deliveries." },
     RW: { description: "6-month shelf-stable UHT milk — priority routing for rural cooperatives." },
-    IN: { availableIn: undefined, unavailable: true },
+    IN: { unavailable: true },
   },
 
   // Food — regional menu variants
