@@ -98,6 +98,7 @@ type Ctx = {
   setCurrency: (c: Currency) => void;
   location: string;
   setLocation: (l: string) => void;
+  country: string; // ISO-2 derived from `location` — used for region-aware catalog
   t: (key: keyof typeof strings.en) => string;
   fx: (usd: number) => string;
   dir: "ltr" | "rtl";
