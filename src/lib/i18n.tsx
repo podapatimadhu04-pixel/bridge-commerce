@@ -154,7 +154,9 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
       const formatted = v >= 100 ? Math.round(v).toLocaleString() : v.toFixed(2);
       return `${c.symbol}${formatted}`;
     };
-    return { lang, setLang, currency, setCurrency, location, setLocation, t, fx, dir: lang === "ar" ? "rtl" : "ltr" };
+    const parts = location.split(",");
+    const country = (parts[parts.length - 1] || "").trim().toUpperCase();
+    return { lang, setLang, currency, setCurrency, location, setLocation, country, t, fx, dir: lang === "ar" ? "rtl" : "ltr" };
   }, [lang, currency, location]);
 
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
