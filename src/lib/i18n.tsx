@@ -1,4 +1,28 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { detectGeo } from "@/lib/geo.functions";
+
+// Country → { location label matching TopNav LOCATIONS, currency, language }
+const COUNTRY_MAP: Record<string, { location: string; currency: Currency; lang: Lang }> = {
+  US: { location: "New York, US", currency: "USD", lang: "en" },
+  GB: { location: "London, GB", currency: "GBP", lang: "en" },
+  IN: { location: "Mumbai, IN", currency: "INR", lang: "hi" },
+  JP: { location: "Tokyo, JP", currency: "USD", lang: "en" },
+  IT: { location: "Rome, IT", currency: "EUR", lang: "en" },
+  CN: { location: "Shenzhen, CN", currency: "CNY", lang: "zh" },
+  RW: { location: "Kigali, RW", currency: "USD", lang: "fr" },
+  BR: { location: "São Paulo, BR", currency: "BRL", lang: "pt" },
+  AE: { location: "Dubai, AE", currency: "AED", lang: "ar" },
+  PE: { location: "Cusco, PE", currency: "USD", lang: "es" },
+  // Broader region fallbacks by currency/language
+  ES: { location: "Rome, IT", currency: "EUR", lang: "es" },
+  FR: { location: "Rome, IT", currency: "EUR", lang: "fr" },
+  DE: { location: "Rome, IT", currency: "EUR", lang: "en" },
+  MX: { location: "New York, US", currency: "USD", lang: "es" },
+  PT: { location: "Rome, IT", currency: "EUR", lang: "pt" },
+  SA: { location: "Dubai, AE", currency: "AED", lang: "ar" },
+  EG: { location: "Dubai, AE", currency: "AED", lang: "ar" },
+};
+
 
 export type Lang = "en" | "es" | "fr" | "hi" | "zh" | "ar" | "pt";
 export type Currency = "USD" | "EUR" | "INR" | "GBP" | "CNY" | "BRL" | "AED";
