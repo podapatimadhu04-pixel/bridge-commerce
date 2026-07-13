@@ -3,7 +3,7 @@ import { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { VendorCard } from "@/components/VendorCard";
 import { ProductCard } from "@/components/ProductCard";
-import { VENDORS, PRODUCTS, CATEGORIES } from "@/lib/mock-data";
+import { VENDORS, PRODUCTS, CATEGORIES, resolveProduct } from "@/lib/mock-data";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/lib/i18n";
@@ -25,12 +25,14 @@ export const Route = createFileRoute("/electronics")({
 });
 
 function ElectronicsPage() {
-  const { t, fx } = useLocale();
+  const { t, fx, country } = useLocale();
   const { add } = useCart();
   const [cat, setCat] = useState("All");
   const [q, setQ] = useState("");
   const vendors = VENDORS.filter((v) => v.type === "electronics");
   const products = PRODUCTS.filter((p) => p.kind === "electronics")
+    .map((p) => resolveProduct(p, country))
+    .filter((p) => p.available)
     .filter((p) => cat === "All" || p.category === cat)
     .filter((p) => !q || p.name.toLowerCase().includes(q.toLowerCase()));
 

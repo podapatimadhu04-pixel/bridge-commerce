@@ -13,6 +13,13 @@ export type Vendor = {
   rural?: boolean;
 };
 
+export type RegionOverride = {
+  priceMultiplier?: number; // applied to base price + every bulk tier
+  priceUsd?: number;        // absolute override (wins over multiplier)
+  description?: string;     // localized copy for this country
+  unavailable?: boolean;    // hide product for this country
+};
+
 export type Product = {
   id: string;
   vendorId: string;
@@ -25,7 +32,12 @@ export type Product = {
   bulkTiers?: { qty: number; priceUsd: number }[];
   specs?: Record<string, string>;
   kind: "food" | "grocery" | "electronics";
+  // Country-code (ISO-2) keyed overrides. Missing key = base catalog.
+  regions?: Record<string, RegionOverride>;
+  // If set, product only ships to these countries (empty/undefined = global).
+  availableIn?: string[];
 };
+
 
 const img = (seed: string, w = 800, h = 600) =>
   `https://images.unsplash.com/photo-${seed}?auto=format&fit=crop&w=${w}&h=${h}&q=70`;
@@ -126,5 +138,144 @@ export const CATEGORIES = {
   grocery: ["Fresh", "Bakery", "Grains", "Dairy", "Household"],
   electronics: ["Air Conditioners", "Refrigerators", "Coolers", "Fans", "Tube Lights", "TVs", "Water Motors"],
 };
+
+// ============================================================
+// Region-aware catalog overrides
+// ============================================================
+// Keyed by product id. Country-code ISO-2 sub-keys carry:
+//  - priceMultiplier: adjusts base price + every bulk tier (import duties,
+//    local VAT, freight, cost-of-living).
+//  - priceUsd: absolute price override (rare — wins over multiplier).
+//  - description: localized copy (regulatory notes, local product name).
+//  - unavailable: block sales into that country.
+// availableIn (top-level) limits distribution when set.
+// ============================================================
+const REGION_OVERRIDES: Record<string, Product["regions"]> = {
+  // Wholesale electronics — duty/VAT-adjusted pricing per market
+  p8: { // 1.5 Ton Split AC
+    IN: { priceMultiplier: 0.85, description: "5-star BEE-rated split AC with R32, BIS-certified, PAN-India warranty network." },
+    US: { priceMultiplier: 1.35, description: "208-230V split AC; ships DDP, includes US freight and duties." },
+    GB: { priceMultiplier: 1.28 },
+    AE: { priceMultiplier: 1.05, description: "T3-rated tropical inverter split AC, suited for Gulf climate." },
+    KE: { priceMultiplier: 1.15, description: "240V 50Hz split AC with surge-tolerant compressor for East Africa grids." },
+    BR: { unavailable: true }, // no local certification (INMETRO)
+  },
+  p9: { // Refrigerator
+    IN: { priceMultiplier: 0.9 },
+    US: { priceMultiplier: 1.4 },
+    EU: { unavailable: true },
+    BR: { priceMultiplier: 1.5 },
+  },
+  p13: { // 55" 4K TV
+    US: { priceMultiplier: 1.25, description: "ATSC 3.0 tuner variant, 120V power, ships DDP." },
+    IN: { priceMultiplier: 0.9, description: "DVB-T2/S2 tuner, HDMI 2.1, Android TV, ships with Indian power cord." },
+    GB: { priceMultiplier: 1.2, description: "DVB-T2/S2 tuner, Freeview compatible, UK 3-pin plug." },
+    AE: { priceMultiplier: 1.1 },
+    BR: { priceMultiplier: 1.65, description: "ISDB-T tuner, 100-240V, Brazilian ANATEL homologation." },
+  },
+  p43: { // Solar Panel 450W
+    KE: { priceMultiplier: 0.95, description: "Mono-PERC solar panel, KEBS-approved, off-grid ready for East African installers." },
+    RW: { priceMultiplier: 0.95 },
+    IN: { priceMultiplier: 0.88, description: "ALMM-listed mono-PERC panel, DCR-compliant for rooftop subsidy schemes." },
+    US: { priceMultiplier: 1.5, description: "UL-1703 listed, includes US freight and Section 201 duty." },
+  },
+  p44: { // Solar Home Kit
+    KE: { description: "Off-grid solar home kit with M-KOPA-style pay-as-you-go compatibility." },
+    RW: { description: "Rural solar home kit — panel, LiFePO4 battery, LED lights and phone charger." },
+    IN: { priceMultiplier: 0.9 },
+    US: { unavailable: true },
+    GB: { unavailable: true },
+  },
+
+  // Groceries — regional availability & pricing
+  p7: { // Andean Quinoa
+    PE: { priceMultiplier: 0.6, description: "Fresh-harvest tri-color quinoa direct from Cusco cooperatives." },
+    US: { priceMultiplier: 1.3 },
+    IN: { priceMultiplier: 1.4, description: "Imported Andean quinoa — protein-rich grain, gluten-free." },
+  },
+  p33: { // River Prawns
+    US: { unavailable: true }, // FDA import restriction
+    EU: { unavailable: true },
+    VN: { priceMultiplier: 0.7 },
+  },
+  p37: { // Basmati Rice 10kg
+    IN: { priceMultiplier: 0.55, description: "Aged extra-long-grain basmati from Punjab & Haryana mills." },
+    GB: { priceMultiplier: 1.0 },
+    US: { priceMultiplier: 1.2 },
+  },
+  p38: { // UHT Milk 12x1L
+    AU: { priceMultiplier: 0.9, description: "Shelf-stable UHT milk for remote Outback and island deliveries." },
+    RW: { description: "6-month shelf-stable UHT milk — priority routing for rural cooperatives." },
+    IN: { unavailable: true },
+  },
+
+  // Food — regional menu variants
+  p3: { // Margherita Pizza
+    IN: { description: "Wood-fired Margherita with buffalo mozzarella and San Marzano tomato (vegetarian, halal cheese)." },
+    SA: { description: "Halal-certified Margherita with wood-fired base and fior di latte." },
+    AE: { description: "Halal-certified Margherita with fior di latte and fresh basil." },
+  },
+  p2: { // Chicken Biryani
+    IN: { priceMultiplier: 0.6, description: "Hyderabadi dum biryani with saffron chicken, raita and mirchi ka salan." },
+    AE: { description: "Halal-certified chicken biryani with basmati, saffron and raita." },
+    SA: { description: "Halal-certified chicken biryani with basmati, saffron and raita." },
+  },
+  p16: { // Tacos al Pastor (pork)
+    SA: { unavailable: true },
+    AE: { unavailable: true },
+    IN: { unavailable: true }, // pork restrictions/preference
+  },
+  p27: { // Currywurst (pork)
+    SA: { unavailable: true },
+    AE: { unavailable: true },
+  },
+};
+
+// Attach the overrides to each product without mutating declarations above.
+for (const [pid, regions] of Object.entries(REGION_OVERRIDES)) {
+  const product = PRODUCTS.find((p) => p.id === pid);
+  if (product && regions) product.regions = regions;
+}
+
+// ============================================================
+// Resolver — apply region overrides to produce the effective product
+// the buyer sees. Server checkout MUST resolve with the same country to
+// prevent client-side price manipulation.
+// ============================================================
+export type ResolvedProduct = Product & { available: boolean };
+
+export function resolveProduct(product: Product, country?: string | null): ResolvedProduct {
+  const cc = country ? country.toUpperCase() : null;
+
+  // availableIn allow-list (top-level distribution constraint)
+  if (product.availableIn && product.availableIn.length > 0) {
+    if (!cc || !product.availableIn.includes(cc)) {
+      return { ...product, available: false };
+    }
+  }
+
+  const o = cc ? product.regions?.[cc] : undefined;
+  if (!o) return { ...product, available: true };
+
+  const mult = o.priceMultiplier ?? 1;
+  const basePrice = o.priceUsd ?? Number((product.priceUsd * mult).toFixed(2));
+  const tiers = product.bulkTiers?.map((t) => ({
+    qty: t.qty,
+    priceUsd: o.priceUsd ? t.priceUsd : Number((t.priceUsd * mult).toFixed(2)),
+  }));
+
+  return {
+    ...product,
+    priceUsd: basePrice,
+    bulkTiers: tiers ?? product.bulkTiers,
+    description: o.description ?? product.description,
+    available: !o.unavailable,
+  };
+}
+
+export function resolveCatalog(products: Product[], country?: string | null): ResolvedProduct[] {
+  return products.map((p) => resolveProduct(p, country)).filter((p) => p.available);
+}
+
 
 

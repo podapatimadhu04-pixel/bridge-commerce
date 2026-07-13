@@ -98,6 +98,7 @@ type Ctx = {
   setCurrency: (c: Currency) => void;
   location: string;
   setLocation: (l: string) => void;
+  country: string; // ISO-2 derived from `location` — used for region-aware catalog
   t: (key: keyof typeof strings.en) => string;
   fx: (usd: number) => string;
   dir: "ltr" | "rtl";
@@ -153,7 +154,9 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
       const formatted = v >= 100 ? Math.round(v).toLocaleString() : v.toFixed(2);
       return `${c.symbol}${formatted}`;
     };
-    return { lang, setLang, currency, setCurrency, location, setLocation, t, fx, dir: lang === "ar" ? "rtl" : "ltr" };
+    const parts = location.split(",");
+    const country = (parts[parts.length - 1] || "").trim().toUpperCase();
+    return { lang, setLang, currency, setCurrency, location, setLocation, country, t, fx, dir: lang === "ar" ? "rtl" : "ltr" };
   }, [lang, currency, location]);
 
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;

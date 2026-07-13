@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useMemo } from "react";
-import type { Product } from "@/lib/mock-data";
+import { resolveProduct, type Product } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({ meta: [{ title: "Cart — OrbitMarket" }] }),
@@ -57,32 +57,37 @@ function computeTier(product: Product, qty: number): TierInfo {
 }
 
 function CartPage() {
-  const { t, fx } = useLocale();
+  const { t, fx, country } = useLocale();
   const { detailed, setQty, remove, clear, count } = useCart();
   const navigate = useNavigate();
   const { user } = useAuth();
   const submitOrder = useServerFn(placeOrder);
 
-  // Recompute totals + validation from tier logic
+  // Recompute totals + validation from region-resolved catalog + tier logic
   const analysis = useMemo(() => {
-    const lines = detailed.map(({ product, qty }) => {
-      const tier = computeTier(product, qty);
-      const moqShortfall = product.moq && qty < product.moq ? product.moq - qty : 0;
-      return {
-        product,
-        qty,
-        ...tier,
-        lineUsd: Number((tier.unitUsd * qty).toFixed(2)),
-        moqShortfall,
-      };
-    });
-    const subtotalUsd = Number(lines.reduce((a, l) => a + l.lineUsd, 0).toFixed(2));
+    const lines = detailed
+      .map(({ product, qty }) => ({ product: resolveProduct(product, country), qty }))
+      // If the country blocks a product mid-session, drop it from checkout
+      // math but still surface a violation so the buyer sees the reason.
+      .map(({ product, qty }) => {
+        const tier = computeTier(product, qty);
+        const moqShortfall = product.moq && qty < product.moq ? product.moq - qty : 0;
+        return {
+          product,
+          qty,
+          ...tier,
+          lineUsd: Number((tier.unitUsd * qty).toFixed(2)),
+          moqShortfall,
+          unavailable: !product.available,
+        };
+      });
+    const subtotalUsd = Number(lines.filter((l) => !l.unavailable).reduce((a, l) => a + l.lineUsd, 0).toFixed(2));
     const shippingUsd = subtotalUsd > 0 ? Number(Math.max(4.99, subtotalUsd * 0.03).toFixed(2)) : 0;
     const taxUsd = Number((subtotalUsd * 0.08).toFixed(2));
     const totalUsd = Number((subtotalUsd + shippingUsd + taxUsd).toFixed(2));
-    const violations = lines.filter((l) => l.moqShortfall > 0);
+    const violations = lines.filter((l) => l.moqShortfall > 0 || l.unavailable);
     return { lines, subtotalUsd, shippingUsd, taxUsd, totalUsd, violations };
-  }, [detailed]);
+  }, [detailed, country]);
 
   const canCheckout = analysis.violations.length === 0 && count > 0;
 
@@ -121,7 +126,7 @@ function CartPage() {
 
           <div className="divide-y rounded-2xl border bg-card shadow-soft">
             {analysis.lines.map((line) => {
-              const { product, qty, unitUsd, currentTierQty, nextTier, savingsPerUnitUsd, lineUsd, moqShortfall } = line;
+              const { product, qty, unitUsd, currentTierQty, nextTier, savingsPerUnitUsd, lineUsd, moqShortfall, unavailable } = line;
               const hasTiers = !!product.bulkTiers && product.bulkTiers.length > 0;
               return (
                 <div key={product.id} className="flex gap-4 p-4">
@@ -151,6 +156,18 @@ function CartPage() {
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
+
+                    {unavailable && (
+                      <div className="flex items-center justify-between gap-2 rounded-md border border-destructive/40 bg-destructive/5 px-2.5 py-1.5 text-xs">
+                        <span className="flex items-center gap-1.5 text-destructive">
+                          <AlertTriangle className="h-3.5 w-3.5" />
+                          Not available for delivery in your region — remove to continue.
+                        </span>
+                        <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => remove(product.id)}>
+                          Remove
+                        </Button>
+                      </div>
+                    )}
 
                     {moqShortfall > 0 && product.moq && (
                       <div className="flex items-center justify-between gap-2 rounded-md border border-destructive/40 bg-destructive/5 px-2.5 py-1.5 text-xs">
@@ -249,7 +266,10 @@ function CartPage() {
               try {
                 const result = await submitOrder({
                   data: {
-                    lines: analysis.lines.map(({ product, qty }) => ({ productId: product.id, qty })),
+                    country: country || undefined,
+                    lines: analysis.lines
+                      .filter((l) => !l.unavailable)
+                      .map(({ product, qty }) => ({ productId: product.id, qty })),
                   },
                 });
                 clear();
