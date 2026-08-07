@@ -21,7 +21,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useMemo } from "react";
-import { resolveProduct, type Product } from "@/lib/mock-data";
+import { resolveProduct, VENDORS, type Product } from "@/lib/mock-data";
+import { estimateDelivery, parseLocation } from "@/lib/shipping";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({ meta: [{ title: "Cart — OrbitMarket" }] }),
