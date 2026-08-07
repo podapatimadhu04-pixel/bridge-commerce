@@ -1,11 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { PRODUCTS, resolveProduct } from "./mock-data";
+import { PRODUCTS, VENDORS, resolveProduct } from "./mock-data";
+import { estimateDelivery } from "./shipping";
 
 
 const CheckoutInput = z.object({
   country: z.string().length(2).optional(),
+  locality: z.string().max(120).optional(),
   lines: z
     .array(
       z.object({
