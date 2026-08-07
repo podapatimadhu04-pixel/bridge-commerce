@@ -18,10 +18,13 @@ import {
   AlertTriangle,
   TrendingDown,
   CheckCircle2,
+  Clock,
+  MapPin,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useMemo } from "react";
-import { resolveProduct, type Product } from "@/lib/mock-data";
+import { resolveProduct, VENDORS, type Product } from "@/lib/mock-data";
+import { estimateDelivery, parseLocation } from "@/lib/shipping";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({ meta: [{ title: "Cart — OrbitMarket" }] }),
@@ -57,11 +60,12 @@ function computeTier(product: Product, qty: number): TierInfo {
 }
 
 function CartPage() {
-  const { t, fx, country } = useLocale();
+  const { t, fx, country, location } = useLocale();
   const { detailed, setQty, remove, clear, count } = useCart();
   const navigate = useNavigate();
   const { user } = useAuth();
   const submitOrder = useServerFn(placeOrder);
+  const locality = useMemo(() => parseLocation(location).locality, [location]);
 
   // Recompute totals + validation from region-resolved catalog + tier logic
   const analysis = useMemo(() => {
@@ -82,12 +86,20 @@ function CartPage() {
         };
       });
     const subtotalUsd = Number(lines.filter((l) => !l.unavailable).reduce((a, l) => a + l.lineUsd, 0).toFixed(2));
-    const shippingUsd = subtotalUsd > 0 ? Number(Math.max(4.99, subtotalUsd * 0.03).toFixed(2)) : 0;
+    const shippable = lines.filter((l) => !l.unavailable);
+    const delivery = estimateDelivery({
+      country,
+      locality,
+      subtotalUsd,
+      kinds: [...new Set(shippable.map((l) => l.product.kind))],
+      originCountries: shippable.map((l) => VENDORS.find((v) => v.id === l.product.vendorId)?.country),
+    });
+    const shippingUsd = delivery.shippingUsd;
     const taxUsd = Number((subtotalUsd * 0.08).toFixed(2));
     const totalUsd = Number((subtotalUsd + shippingUsd + taxUsd).toFixed(2));
     const violations = lines.filter((l) => l.moqShortfall > 0 || l.unavailable);
-    return { lines, subtotalUsd, shippingUsd, taxUsd, totalUsd, violations };
-  }, [detailed, country]);
+    return { lines, subtotalUsd, shippingUsd, taxUsd, totalUsd, violations, delivery };
+  }, [detailed, country, locality]);
 
   const canCheckout = analysis.violations.length === 0 && count > 0;
 
@@ -235,9 +247,39 @@ function CartPage() {
           <p className="mt-0.5 text-xs text-muted-foreground">
             Final pricing is recalculated server-side from the authoritative catalog at checkout.
           </p>
+          <div className="mt-4 rounded-xl border bg-muted/30 p-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-2 text-sm font-medium">
+                <Truck className="h-4 w-4 text-muted-foreground" />
+                Delivery estimate
+              </div>
+              <Badge variant="secondary" className="text-[10px]">{analysis.delivery.zoneLabel}</Badge>
+            </div>
+            <div className="mt-2 flex items-center gap-2 text-sm">
+              <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="font-semibold">{analysis.delivery.etaLabel}</span>
+              <span className="text-muted-foreground">
+                · {analysis.delivery.shippingUsd === 0 ? "Free delivery" : `${fx(analysis.delivery.shippingUsd)} shipping`}
+              </span>
+            </div>
+            {analysis.delivery.notes.length > 0 && (
+              <ul className="mt-2 space-y-1 text-[11px] text-muted-foreground">
+                {analysis.delivery.notes.map((n) => (
+                  <li key={n} className="flex items-start gap-1.5">
+                    <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
+                    {n}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
           <dl className="mt-4 space-y-2 text-sm">
             <Row label={`Subtotal (${count} item${count > 1 ? "s" : ""})`} value={fx(analysis.subtotalUsd)} />
-            <Row label="Shipping (global, est.)" value={fx(analysis.shippingUsd)} />
+            <Row
+              label={`Shipping — ${analysis.delivery.zoneLabel.toLowerCase()}`}
+              value={analysis.shippingUsd === 0 ? "Free" : fx(analysis.shippingUsd)}
+            />
             <Row label="Duties & tax (est. 8%)" value={fx(analysis.taxUsd)} />
             <div className="my-3 border-t" />
             <Row
@@ -245,6 +287,7 @@ function CartPage() {
               value={<span className="text-base font-semibold">{fx(analysis.totalUsd)}</span>}
             />
           </dl>
+
 
           {!canCheckout && analysis.violations.length > 0 && (
             <p className="mt-4 flex items-start gap-1.5 text-xs text-destructive">
@@ -260,13 +303,14 @@ function CartPage() {
             onClick={async () => {
               if (!user) {
                 toast.info("Sign in to place and track your order");
-                navigate({ to: "/auth" });
+                navigate({ to: "/auth", search: { next: "/cart" } });
                 return;
               }
               try {
                 const result = await submitOrder({
                   data: {
                     country: country || undefined,
+                    locality: locality || undefined,
                     lines: analysis.lines
                       .filter((l) => !l.unavailable)
                       .map(({ product, qty }) => ({ productId: product.id, qty })),
