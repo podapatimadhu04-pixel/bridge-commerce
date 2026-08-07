@@ -36,9 +36,12 @@ function RestaurantsPage() {
           <p className="mt-2 text-muted-foreground">Explore chef-run kitchens and neighborhood cafés around the world.</p>
         </header>
 
-        <section className="mb-8 grid gap-4 md:grid-cols-3">
-          {vendors.slice(0, 3).map((v) => <VendorCard key={v.id} vendor={v} />)}
+        <section className="mb-8 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          {vendors
+            .filter((v) => !q || `${v.name} ${v.city} ${v.tags.join(" ")}`.toLowerCase().includes(q.toLowerCase()))
+            .map((v) => <VendorCard key={v.id} vendor={v} />)}
         </section>
+
 
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <Input
