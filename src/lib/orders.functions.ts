@@ -93,7 +93,20 @@ export const placeOrder = createServerFn({ method: "POST" })
     }
 
     subtotalUsd = Number(subtotalUsd.toFixed(2));
-    const shippingUsd = subtotalUsd > 0 ? Number(Math.max(4.99, subtotalUsd * 0.03).toFixed(2)) : 0;
+
+    // Region-aware delivery: same estimator the cart shows the buyer, but the
+    // authoritative figures come from here.
+    const ordered = items
+      .map((i) => PRODUCTS.find((p) => p.id === i.productId))
+      .filter(Boolean) as (typeof PRODUCTS)[number][];
+    const delivery = estimateDelivery({
+      country,
+      locality: data.locality ?? null,
+      subtotalUsd,
+      kinds: [...new Set(ordered.map((p) => p.kind))],
+      originCountries: ordered.map((p) => VENDORS.find((v) => v.id === p.vendorId)?.country),
+    });
+    const shippingUsd = delivery.shippingUsd;
     const taxUsd = Number((subtotalUsd * 0.08).toFixed(2));
     const totalUsd = Number((subtotalUsd + shippingUsd + taxUsd).toFixed(2));
 
@@ -114,5 +127,5 @@ export const placeOrder = createServerFn({ method: "POST" })
     });
     if (error) throw new Error(error.message);
 
-    return { code, subtotalUsd, shippingUsd, taxUsd, totalUsd };
+    return { code, subtotalUsd, shippingUsd, taxUsd, totalUsd, delivery };
   });
