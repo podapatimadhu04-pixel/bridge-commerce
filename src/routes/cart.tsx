@@ -57,11 +57,12 @@ function computeTier(product: Product, qty: number): TierInfo {
 }
 
 function CartPage() {
-  const { t, fx, country } = useLocale();
+  const { t, fx, country, location } = useLocale();
   const { detailed, setQty, remove, clear, count } = useCart();
   const navigate = useNavigate();
   const { user } = useAuth();
   const submitOrder = useServerFn(placeOrder);
+  const locality = useMemo(() => parseLocation(location).locality, [location]);
 
   // Recompute totals + validation from region-resolved catalog + tier logic
   const analysis = useMemo(() => {
@@ -82,12 +83,20 @@ function CartPage() {
         };
       });
     const subtotalUsd = Number(lines.filter((l) => !l.unavailable).reduce((a, l) => a + l.lineUsd, 0).toFixed(2));
-    const shippingUsd = subtotalUsd > 0 ? Number(Math.max(4.99, subtotalUsd * 0.03).toFixed(2)) : 0;
+    const shippable = lines.filter((l) => !l.unavailable);
+    const delivery = estimateDelivery({
+      country,
+      locality,
+      subtotalUsd,
+      kinds: [...new Set(shippable.map((l) => l.product.kind))],
+      originCountries: shippable.map((l) => VENDORS.find((v) => v.id === l.product.vendorId)?.country),
+    });
+    const shippingUsd = delivery.shippingUsd;
     const taxUsd = Number((subtotalUsd * 0.08).toFixed(2));
     const totalUsd = Number((subtotalUsd + shippingUsd + taxUsd).toFixed(2));
     const violations = lines.filter((l) => l.moqShortfall > 0 || l.unavailable);
-    return { lines, subtotalUsd, shippingUsd, taxUsd, totalUsd, violations };
-  }, [detailed, country]);
+    return { lines, subtotalUsd, shippingUsd, taxUsd, totalUsd, violations, delivery };
+  }, [detailed, country, locality]);
 
   const canCheckout = analysis.violations.length === 0 && count > 0;
 
