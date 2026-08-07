@@ -245,9 +245,39 @@ function CartPage() {
           <p className="mt-0.5 text-xs text-muted-foreground">
             Final pricing is recalculated server-side from the authoritative catalog at checkout.
           </p>
+          <div className="mt-4 rounded-xl border bg-muted/30 p-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-2 text-sm font-medium">
+                <Truck className="h-4 w-4 text-muted-foreground" />
+                Delivery estimate
+              </div>
+              <Badge variant="secondary" className="text-[10px]">{analysis.delivery.zoneLabel}</Badge>
+            </div>
+            <div className="mt-2 flex items-center gap-2 text-sm">
+              <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="font-semibold">{analysis.delivery.etaLabel}</span>
+              <span className="text-muted-foreground">
+                · {analysis.delivery.shippingUsd === 0 ? "Free delivery" : `${fx(analysis.delivery.shippingUsd)} shipping`}
+              </span>
+            </div>
+            {analysis.delivery.notes.length > 0 && (
+              <ul className="mt-2 space-y-1 text-[11px] text-muted-foreground">
+                {analysis.delivery.notes.map((n) => (
+                  <li key={n} className="flex items-start gap-1.5">
+                    <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
+                    {n}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
           <dl className="mt-4 space-y-2 text-sm">
             <Row label={`Subtotal (${count} item${count > 1 ? "s" : ""})`} value={fx(analysis.subtotalUsd)} />
-            <Row label="Shipping (global, est.)" value={fx(analysis.shippingUsd)} />
+            <Row
+              label={`Shipping — ${analysis.delivery.zoneLabel.toLowerCase()}`}
+              value={analysis.shippingUsd === 0 ? "Free" : fx(analysis.shippingUsd)}
+            />
             <Row label="Duties & tax (est. 8%)" value={fx(analysis.taxUsd)} />
             <div className="my-3 border-t" />
             <Row
@@ -255,6 +285,7 @@ function CartPage() {
               value={<span className="text-base font-semibold">{fx(analysis.totalUsd)}</span>}
             />
           </dl>
+
 
           {!canCheckout && analysis.violations.length > 0 && (
             <p className="mt-4 flex items-start gap-1.5 text-xs text-destructive">
