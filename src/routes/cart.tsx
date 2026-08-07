@@ -303,13 +303,14 @@ function CartPage() {
             onClick={async () => {
               if (!user) {
                 toast.info("Sign in to place and track your order");
-                navigate({ to: "/auth" });
+                navigate({ to: "/auth", search: { next: "/cart" } });
                 return;
               }
               try {
                 const result = await submitOrder({
                   data: {
                     country: country || undefined,
+                    locality: locality || undefined,
                     lines: analysis.lines
                       .filter((l) => !l.unavailable)
                       .map(({ product, qty }) => ({ productId: product.id, qty })),
