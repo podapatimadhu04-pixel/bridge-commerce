@@ -10,7 +10,7 @@ export function ProductCard({ product }: { product: Product }) {
   const { fx, t, country } = useLocale();
   const { add } = useCart();
   const resolved = resolveProduct(product, country);
-  const isWholesale = resolved.kind === "electronics";
+  const isWholesale = (resolved.bulkTiers?.length ?? 0) > 0;
   const startPrice = resolved.bulkTiers?.[0]?.priceUsd ?? resolved.priceUsd;
   const isRegional =
     resolved.priceUsd !== product.priceUsd ||
