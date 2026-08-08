@@ -12,7 +12,7 @@ export default defineMcp({
   title: "OrbitMarket",
   version: "0.1.0",
   instructions:
-    "Tools for OrbitMarket, a global marketplace for restaurants, groceries, and wholesale electronics. Use browse_products to search the public catalog. Use list_my_orders, list_my_addresses, and get_my_profile to read the signed-in user's data.",
+    "Tools for OrbitMarket, a global marketplace for restaurants and groceries. Use browse_products to search the public catalog. Use list_my_orders, list_my_addresses, and get_my_profile to read the signed-in user's data.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated",

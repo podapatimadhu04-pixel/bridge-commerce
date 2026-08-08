@@ -6,11 +6,11 @@ export default defineTool({
   name: "browse_products",
   title: "Browse products",
   description:
-    "Search OrbitMarket's public catalog of restaurants, groceries, and wholesale electronics. Filter by kind, category, or free-text query.",
+    "Search OrbitMarket's public catalog of restaurants and groceries. Filter by kind, category, or free-text query.",
   inputSchema: {
     query: z.string().optional().describe("Free-text search over name/description/vendor."),
-    kind: z.enum(["food", "grocery", "electronics"]).optional().describe("Product kind filter."),
-    category: z.string().optional().describe("Category filter (e.g. 'Air Conditioners')."),
+    kind: z.enum(["food", "grocery"]).optional().describe("Product kind filter."),
+    category: z.string().optional().describe("Category filter (e.g. 'Mains')."),
     limit: z.number().int().min(1).max(50).optional().describe("Max results, default 20."),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },

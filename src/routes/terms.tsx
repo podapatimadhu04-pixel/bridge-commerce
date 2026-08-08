@@ -5,7 +5,7 @@ export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
       { title: "Terms of Service — OrbitMarket" },
-      { name: "description", content: "The terms governing use of OrbitMarket's global marketplace for restaurants, groceries and wholesale electronics." },
+      { name: "description", content: "The terms governing use of OrbitMarket's global marketplace for restaurants and groceries." },
     ],
   }),
   component: TermsPage,
@@ -19,7 +19,7 @@ function TermsPage() {
         <h1 className="mt-2 text-4xl font-bold tracking-tight">Terms of Service</h1>
 
         <h2 className="mt-8 text-lg font-semibold">1. Marketplace role</h2>
-        <p className="mt-2">OrbitMarket is a marketplace connecting buyers with independent restaurants, grocery shops and wholesale electronics vendors. Each vendor is the seller of record for their listings; OrbitMarket facilitates discovery, ordering and delivery routing.</p>
+        <p className="mt-2">OrbitMarket is a marketplace connecting buyers with independent restaurants and grocery shops. Each vendor is the seller of record for their listings; OrbitMarket facilitates discovery, ordering and delivery routing.</p>
 
         <h2 className="mt-6 text-lg font-semibold">2. Eligibility</h2>
         <p className="mt-2">You must be able to form a binding contract in your jurisdiction. Wholesale (B2B) purchases may require a valid business tax ID.</p>

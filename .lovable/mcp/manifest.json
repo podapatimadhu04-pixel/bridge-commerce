@@ -19,7 +19,7 @@
       {
         "name": "browse_products",
         "title": "Browse products",
-        "description": "Search OrbitMarket's public catalog of restaurants, groceries, and wholesale electronics. Filter by kind, category, or free-text query.",
+        "description": "Search OrbitMarket's public catalog of restaurants and groceries. Filter by kind, category, or free-text query.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -38,12 +38,11 @@
               "type": "string",
               "enum": [
                 "food",
-                "grocery",
-                "electronics"
+                "grocery"
               ]
             },
             "category": {
-              "description": "Category filter (e.g. 'Air Conditioners').",
+              "description": "Category filter (e.g. 'Mains').",
               "type": "string"
             },
             "limit": {

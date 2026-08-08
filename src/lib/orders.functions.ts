@@ -23,7 +23,6 @@ const CheckoutInput = z.object({
 const MAX_QTY_BY_KIND: Record<string, number> = {
   food: 25,
   grocery: 100,
-  electronics: 100000,
 };
 
 export const placeOrder = createServerFn({ method: "POST" })

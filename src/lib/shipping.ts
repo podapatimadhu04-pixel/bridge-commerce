@@ -69,8 +69,8 @@ export type DeliveryInput = {
   /** Buyer city / locality, e.g. "Cusco". */
   locality?: string | null;
   subtotalUsd: number;
-  /** Kinds present in the cart — food is local, electronics ships freight. */
-  kinds: ("food" | "grocery" | "electronics")[];
+  /** Kinds present in the cart — food is local, groceries route normally. */
+  kinds: ("food" | "grocery")[];
   /** Origin countries of the vendors in the cart (ISO-2). */
   originCountries?: (string | null | undefined)[];
 };
@@ -94,14 +94,13 @@ export function estimateDelivery(input: DeliveryInput): DeliveryEstimate {
   // Base handling + weight-ish proxy on subtotal, then zone and locality factors.
   const base = zone === "domestic-metro" ? 3.49 : zone === "domestic-rural" ? 6.49 : zone === "regional" ? 11.9 : 24.5;
   let rate = zone === "domestic-metro" ? 0.02 : zone === "domestic-rural" ? 0.03 : zone === "regional" ? 0.045 : 0.065;
-  if (kinds.has("electronics")) rate += 0.015; // pallet / freight surcharge
   if (kinds.has("food") && zone.startsWith("domestic")) rate = Math.min(rate, 0.02); // hot food is flat-ish
 
   let shippingUsd = base + input.subtotalUsd * rate;
   if (country && FAST_LANE.has(country)) shippingUsd *= 0.9;
   if (country && SLOW_LANE.has(country)) shippingUsd *= 1.2;
-  // Free shipping over a threshold for domestic non-freight orders.
-  const freeThreshold = kinds.has("electronics") ? Infinity : 120;
+  // Free shipping over a threshold for domestic orders.
+  const freeThreshold = 120;
   const freeShipping = zone.startsWith("domestic") && input.subtotalUsd >= freeThreshold;
   shippingUsd = input.subtotalUsd <= 0 ? 0 : freeShipping ? 0 : Number(shippingUsd.toFixed(2));
 
@@ -118,7 +117,6 @@ export function estimateDelivery(input: DeliveryInput): DeliveryEstimate {
   } else {
     min = 7; max = 18;
   }
-  if (kinds.has("electronics") && !zone.startsWith("domestic")) max += 4; // customs on freight
   if (country && SLOW_LANE.has(country)) { min += 1; max += 5; }
   if (country && FAST_LANE.has(country) && max > 2) max -= 1;
 
@@ -137,7 +135,6 @@ export function estimateDelivery(input: DeliveryInput): DeliveryEstimate {
   if (rural && zone.startsWith("domestic")) notes.push("Rural address — last-mile handover via regional hub");
   if (zone === "international") notes.push("Duties and customs clearance may add time at the border");
   if (freeShipping) notes.push(`Free delivery unlocked over $${freeThreshold}`);
-  if (kinds.has("electronics")) notes.push("Wholesale electronics ship as palletised freight");
 
   return {
     zone, zoneLabel, locality, country, rural,
