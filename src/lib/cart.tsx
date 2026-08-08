@@ -45,7 +45,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       .map((l) => {
         const product = PRODUCTS.find((p) => p.id === l.productId);
         if (!product) return null;
-        // apply bulk pricing for electronics
+        // apply bulk pricing tiers if present
         let unit = product.priceUsd;
         if (product.bulkTiers) {
           const tier = [...product.bulkTiers].reverse().find((t) => l.qty >= t.qty);
