@@ -109,7 +109,7 @@ function CartPage() {
         <div className="mx-auto max-w-2xl px-4 py-24 text-center">
           <ShoppingBag className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
           <h1 className="text-2xl font-bold">{t("empty_cart")}</h1>
-          <p className="mt-2 text-muted-foreground">Explore restaurants, provisions and wholesale electronics.</p>
+          <p className="mt-2 text-muted-foreground">Explore restaurants and provisions.</p>
           <Button asChild className="mt-6"><Link to="/">{t("continue_shopping")}</Link></Button>
         </div>
       </AppLayout>

@@ -16,7 +16,6 @@ import { Route as RestaurantsRouteImport } from './routes/restaurants'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as GroceriesRouteImport } from './routes/groceries'
-import { Route as ElectronicsRouteImport } from './routes/electronics'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AccountRouteImport } from './routes/account'
@@ -59,11 +58,6 @@ const McpRoute = McpRouteImport.update({
 const GroceriesRoute = GroceriesRouteImport.update({
   id: '/groceries',
   path: '/groceries',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ElectronicsRoute = ElectronicsRouteImport.update({
-  id: '/electronics',
-  path: '/electronics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CartRoute = CartRouteImport.update({
@@ -115,7 +109,6 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountRoute
   '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
-  '/electronics': typeof ElectronicsRoute
   '/groceries': typeof GroceriesRoute
   '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
@@ -133,7 +126,6 @@ export interface FileRoutesByTo {
   '/account': typeof AccountRoute
   '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
-  '/electronics': typeof ElectronicsRoute
   '/groceries': typeof GroceriesRoute
   '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
@@ -152,7 +144,6 @@ export interface FileRoutesById {
   '/account': typeof AccountRoute
   '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
-  '/electronics': typeof ElectronicsRoute
   '/groceries': typeof GroceriesRoute
   '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
@@ -172,7 +163,6 @@ export interface FileRouteTypes {
     | '/account'
     | '/auth'
     | '/cart'
-    | '/electronics'
     | '/groceries'
     | '/mcp'
     | '/privacy'
@@ -190,7 +180,6 @@ export interface FileRouteTypes {
     | '/account'
     | '/auth'
     | '/cart'
-    | '/electronics'
     | '/groceries'
     | '/mcp'
     | '/privacy'
@@ -208,7 +197,6 @@ export interface FileRouteTypes {
     | '/account'
     | '/auth'
     | '/cart'
-    | '/electronics'
     | '/groceries'
     | '/mcp'
     | '/privacy'
@@ -227,7 +215,6 @@ export interface RootRouteChildren {
   AccountRoute: typeof AccountRoute
   AuthRoute: typeof AuthRoute
   CartRoute: typeof CartRoute
-  ElectronicsRoute: typeof ElectronicsRoute
   GroceriesRoute: typeof GroceriesRoute
   McpRoute: typeof McpRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -290,13 +277,6 @@ declare module '@tanstack/react-router' {
       path: '/groceries'
       fullPath: '/groceries'
       preLoaderRoute: typeof GroceriesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/electronics': {
-      id: '/electronics'
-      path: '/electronics'
-      fullPath: '/electronics'
-      preLoaderRoute: typeof ElectronicsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cart': {
@@ -363,7 +343,6 @@ const rootRouteChildren: RootRouteChildren = {
   AccountRoute: AccountRoute,
   AuthRoute: AuthRoute,
   CartRoute: CartRoute,
-  ElectronicsRoute: ElectronicsRoute,
   GroceriesRoute: GroceriesRoute,
   McpRoute: McpRoute,
   PrivacyRoute: PrivacyRoute,

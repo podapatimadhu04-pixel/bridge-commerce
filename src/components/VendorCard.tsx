@@ -7,8 +7,7 @@ import { useLocale } from "@/lib/i18n";
 export function VendorCard({ vendor }: { vendor: Vendor }) {
   const { t } = useLocale();
   const route =
-    vendor.type === "restaurant" ? "/restaurants" :
-    vendor.type === "grocery" ? "/groceries" : "/electronics";
+    vendor.type === "restaurant" ? "/restaurants" : "/groceries";
   return (
     <Link
       to={route}

@@ -5,7 +5,6 @@ import { PRODUCTS } from "../../mock-data";
 const MAX_QTY_BY_KIND: Record<string, number> = {
   food: 25,
   grocery: 100,
-  electronics: 100000,
 };
 
 export default defineTool({

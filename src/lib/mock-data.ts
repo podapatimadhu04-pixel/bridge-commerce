@@ -1,7 +1,7 @@
 export type Vendor = {
   id: string;
   name: string;
-  type: "restaurant" | "grocery" | "electronics";
+  type: "restaurant" | "grocery";
   city: string;
   country: string;
   rating: number;
@@ -31,7 +31,7 @@ export type Product = {
   moq?: number;
   bulkTiers?: { qty: number; priceUsd: number }[];
   specs?: Record<string, string>;
-  kind: "food" | "grocery" | "electronics";
+  kind: "food" | "grocery";
   // Country-code (ISO-2) keyed overrides. Missing key = base catalog.
   regions?: Record<string, RegionOverride>;
   // If set, product only ships to these countries (empty/undefined = global).
@@ -103,12 +103,6 @@ export const VENDORS: Vendor[] = [
   { id: "v26", name: "Cairo Souq Provisions", type: "grocery", city: "Cairo", country: "EG", rating: 4.5, reviews: 470, eta: "45-60 min", tags: ["Spices", "Staples"], hero: img("1488459716781-31db52582fe9"), open: true },
   { id: "v27", name: "Outback Rural Stores", type: "grocery", city: "Alice Springs", country: "AU", rating: 4.3, reviews: 90, eta: "3-5 hr", tags: ["Rural", "Long-life"], hero: img("1550989460-0adf9ea622e2"), open: true, rural: true },
   { id: "v28", name: "Buenos Aires Almacén", type: "grocery", city: "Buenos Aires", country: "AR", rating: 4.6, reviews: 380, eta: "45 min", tags: ["Bakery", "Meat"], hero: img("1542838132-92c53300491e"), open: true },
-
-  // Electronics wholesale
-  { id: "v7", name: "MegaVolt Wholesale", type: "electronics", city: "Shenzhen", country: "CN", rating: 4.8, reviews: 3400, eta: "7-14 days", tags: ["Wholesale", "Appliances"], hero: img("1518770660439-4636190af475"), open: true },
-  { id: "v8", name: "Bharat Electricals B2B", type: "electronics", city: "Delhi", country: "IN", rating: 4.6, reviews: 1900, eta: "5-10 days", tags: ["Wholesale", "Certified"], hero: img("1587202372775-e229f172b9d7"), open: true },
-  { id: "v29", name: "Istanbul Electro Trade", type: "electronics", city: "Istanbul", country: "TR", rating: 4.5, reviews: 820, eta: "6-12 days", tags: ["Wholesale", "Export"], hero: img("1518770660439-4636190af475"), open: true },
-  { id: "v30", name: "Nairobi Power Traders", type: "electronics", city: "Nairobi", country: "KE", rating: 4.4, reviews: 260, eta: "10-18 days", tags: ["Wholesale", "Solar"], hero: img("1587202372775-e229f172b9d7"), open: true },
 ];
 
 export const PRODUCTS: Product[] = [
@@ -151,18 +145,6 @@ export const PRODUCTS: Product[] = [
   { id: "p41", vendorId: "v5", kind: "grocery", name: "Farm Eggs (30 ct)", category: "Fresh", priceUsd: 6.4, image: img("1571771894821-ce9b6c11b08e"), description: "Free-range brown eggs from local farms." },
   { id: "p42", vendorId: "v4", kind: "grocery", name: "Red Beans (2kg)", category: "Grains", priceUsd: 3.9, image: img("1586201375761-83865001e31c"), description: "Sun-dried highland red kidney beans." },
 
-  // Electronics wholesale
-  { id: "p8", vendorId: "v7", kind: "electronics", name: "1.5 Ton Split Air Conditioner", category: "Air Conditioners", priceUsd: 320, image: img("1631545308456-53abae4d20a1"), description: "Inverter split AC, 5-star efficiency, copper condenser.", moq: 10, bulkTiers: [{ qty: 10, priceUsd: 320 }, { qty: 50, priceUsd: 295 }, { qty: 200, priceUsd: 270 }], specs: { Capacity: "1.5 Ton", Rating: "5-star", Refrigerant: "R32", Warranty: "1+5 yr" } },
-  { id: "p9", vendorId: "v7", kind: "electronics", name: "265L Double-Door Refrigerator", category: "Refrigerators", priceUsd: 410, image: img("1584568694244-14fbdf83bd30"), description: "Frost-free, convertible modes, inverter compressor.", moq: 6, bulkTiers: [{ qty: 6, priceUsd: 410 }, { qty: 30, priceUsd: 378 }, { qty: 100, priceUsd: 349 }], specs: { Capacity: "265L", Type: "Double door", Energy: "3-star" } },
-  { id: "p10", vendorId: "v8", kind: "electronics", name: "Desert Air Cooler 90L", category: "Coolers", priceUsd: 145, image: img("1585771724684-38269d6639fd"), description: "Honeycomb pads, inverter compatible, 4-way deflection.", moq: 20, bulkTiers: [{ qty: 20, priceUsd: 145 }, { qty: 100, priceUsd: 132 }], specs: { Tank: "90L", Motor: "Copper" } },
-  { id: "p11", vendorId: "v8", kind: "electronics", name: "Ceiling Fan 1200mm (BLDC)", category: "Fans", priceUsd: 55, image: img("1585771724684-38269d6639fd"), description: "BLDC energy-saving ceiling fan with remote.", moq: 50, bulkTiers: [{ qty: 50, priceUsd: 55 }, { qty: 200, priceUsd: 49 }, { qty: 1000, priceUsd: 42 }], specs: { Sweep: "1200mm", Motor: "BLDC", Warranty: "2 yr" } },
-  { id: "p12", vendorId: "v7", kind: "electronics", name: "LED Tube Light 20W (Pack of 10)", category: "Tube Lights", priceUsd: 38, image: img("1558002038-1055907df827"), description: "Cool-white 6500K, 2200 lumens, IP20, 2-yr warranty.", moq: 30, bulkTiers: [{ qty: 30, priceUsd: 38 }, { qty: 100, priceUsd: 34 }] },
-  { id: "p13", vendorId: "v7", kind: "electronics", name: '55" 4K UHD Smart TV', category: "TVs", priceUsd: 480, image: img("1593359677879-a4bb92f829d1"), description: "4K HDR, Android TV, Dolby Audio, 3× HDMI.", moq: 8, bulkTiers: [{ qty: 8, priceUsd: 480 }, { qty: 40, priceUsd: 445 }], specs: { Size: '55"', Resolution: "4K UHD", OS: "Android TV" } },
-  { id: "p14", vendorId: "v8", kind: "electronics", name: '1HP Submersible Water Motor', category: "Water Motors", priceUsd: 165, image: img("1581092918056-0c4c3acd3789"), description: "Copper-winding submersible pump for wells and tanks.", moq: 15, bulkTiers: [{ qty: 15, priceUsd: 165 }, { qty: 60, priceUsd: 149 }], specs: { Power: "1 HP", Head: "45 m" } },
-  { id: "p43", vendorId: "v29", kind: "electronics", name: "Solar Panel 450W", category: "Fans", priceUsd: 125, image: img("1518770660439-4636190af475"), description: "Mono-PERC solar panel, 25-yr performance warranty.", moq: 20, bulkTiers: [{ qty: 20, priceUsd: 125 }, { qty: 100, priceUsd: 112 }, { qty: 500, priceUsd: 98 }] },
-  { id: "p44", vendorId: "v30", kind: "electronics", name: "Solar Home Kit 300W", category: "Fans", priceUsd: 220, image: img("1587202372775-e229f172b9d7"), description: "Panel, inverter, battery and lights — off-grid ready.", moq: 10, bulkTiers: [{ qty: 10, priceUsd: 220 }, { qty: 50, priceUsd: 199 }] },
-  { id: "p45", vendorId: "v29", kind: "electronics", name: "Washing Machine 7kg", category: "Refrigerators", priceUsd: 245, image: img("1584568694244-14fbdf83bd30"), description: "Fully-automatic top-load, inverter motor.", moq: 8, bulkTiers: [{ qty: 8, priceUsd: 245 }, { qty: 40, priceUsd: 225 }] },
-
   // Pan-India dishes
   { id: "pin1", vendorId: "in1", kind: "food", name: "Mutton Nihari with Khameeri Roti", category: "Mains", priceUsd: 7.5, image: img("1563379091339-03b21ab4a4f8"), description: "Slow-cooked overnight Mughlai stew, Old Delhi style." },
   { id: "pin2", vendorId: "in2", kind: "food", name: "Amritsari Chole Kulche", category: "Mains", priceUsd: 3.9, image: img("1631452180519-c014fe946bc7"), description: "Buttery kulche with tangy chole, onion and green chutney." },
@@ -202,7 +184,6 @@ export const PRODUCTS: Product[] = [
 export const CATEGORIES = {
   food: ["Mains", "Pizza", "Ramen", "Desserts", "Drinks"],
   grocery: ["Fresh", "Bakery", "Grains", "Dairy", "Household"],
-  electronics: ["Air Conditioners", "Refrigerators", "Coolers", "Fans", "Tube Lights", "TVs", "Water Motors"],
 };
 
 // ============================================================
@@ -217,42 +198,6 @@ export const CATEGORIES = {
 // availableIn (top-level) limits distribution when set.
 // ============================================================
 const REGION_OVERRIDES: Record<string, Product["regions"]> = {
-  // Wholesale electronics — duty/VAT-adjusted pricing per market
-  p8: { // 1.5 Ton Split AC
-    IN: { priceMultiplier: 0.85, description: "5-star BEE-rated split AC with R32, BIS-certified, PAN-India warranty network." },
-    US: { priceMultiplier: 1.35, description: "208-230V split AC; ships DDP, includes US freight and duties." },
-    GB: { priceMultiplier: 1.28 },
-    AE: { priceMultiplier: 1.05, description: "T3-rated tropical inverter split AC, suited for Gulf climate." },
-    KE: { priceMultiplier: 1.15, description: "240V 50Hz split AC with surge-tolerant compressor for East Africa grids." },
-    BR: { unavailable: true }, // no local certification (INMETRO)
-  },
-  p9: { // Refrigerator
-    IN: { priceMultiplier: 0.9 },
-    US: { priceMultiplier: 1.4 },
-    EU: { unavailable: true },
-    BR: { priceMultiplier: 1.5 },
-  },
-  p13: { // 55" 4K TV
-    US: { priceMultiplier: 1.25, description: "ATSC 3.0 tuner variant, 120V power, ships DDP." },
-    IN: { priceMultiplier: 0.9, description: "DVB-T2/S2 tuner, HDMI 2.1, Android TV, ships with Indian power cord." },
-    GB: { priceMultiplier: 1.2, description: "DVB-T2/S2 tuner, Freeview compatible, UK 3-pin plug." },
-    AE: { priceMultiplier: 1.1 },
-    BR: { priceMultiplier: 1.65, description: "ISDB-T tuner, 100-240V, Brazilian ANATEL homologation." },
-  },
-  p43: { // Solar Panel 450W
-    KE: { priceMultiplier: 0.95, description: "Mono-PERC solar panel, KEBS-approved, off-grid ready for East African installers." },
-    RW: { priceMultiplier: 0.95 },
-    IN: { priceMultiplier: 0.88, description: "ALMM-listed mono-PERC panel, DCR-compliant for rooftop subsidy schemes." },
-    US: { priceMultiplier: 1.5, description: "UL-1703 listed, includes US freight and Section 201 duty." },
-  },
-  p44: { // Solar Home Kit
-    KE: { description: "Off-grid solar home kit with M-KOPA-style pay-as-you-go compatibility." },
-    RW: { description: "Rural solar home kit — panel, LiFePO4 battery, LED lights and phone charger." },
-    IN: { priceMultiplier: 0.9 },
-    US: { unavailable: true },
-    GB: { unavailable: true },
-  },
-
   // Groceries — regional availability & pricing
   p7: { // Andean Quinoa
     PE: { priceMultiplier: 0.6, description: "Fresh-harvest tri-color quinoa direct from Cusco cooperatives." },

@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { UtensilsCrossed, ShoppingBasket, Cpu, Truck, Package, Building2 } from "lucide-react";
+import { UtensilsCrossed, ShoppingBasket, Truck, Package, Building2 } from "lucide-react";
 import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -7,7 +7,6 @@ const items = [
   { to: "/", label: "browse", icon: Building2, exact: true },
   { to: "/restaurants", label: "restaurants", icon: UtensilsCrossed, exact: false },
   { to: "/groceries", label: "groceries", icon: ShoppingBasket, exact: false },
-  { to: "/electronics", label: "electronics", icon: Cpu, exact: false },
   { to: "/track", label: "track_order", icon: Truck, exact: false },
   { to: "/vendor", label: "vendor_onboard", icon: Package, exact: false },
 ] as const;

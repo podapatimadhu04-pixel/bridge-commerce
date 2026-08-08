@@ -12,7 +12,7 @@ export const Route = createFileRoute("/vendor")({
   head: () => ({
     meta: [
       { title: "Become a vendor — OrbitMarket" },
-      { name: "description", content: "Onboard your restaurant, provision shop or electronics wholesale business to a global marketplace." },
+      { name: "description", content: "Onboard your restaurant or provision shop to a global marketplace." },
     ],
   }),
   component: VendorPage,
@@ -24,15 +24,14 @@ function VendorPage() {
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 lg:grid-cols-[1fr_420px]">
         <div>
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Grow your business globally.</h1>
-          <p className="mt-4 text-lg text-muted-foreground">Whether you run a village provision store, an inner-city ramen kitchen, or a wholesale electronics warehouse — OrbitMarket puts you on the map.</p>
+          <p className="mt-4 text-lg text-muted-foreground">Whether you run a village provision store or an inner-city ramen kitchen — OrbitMarket puts you on the map.</p>
           <ul className="mt-8 space-y-3">
             {[
-              "Storefront with menus, inventory & bulk pricing tiers",
+              "Storefront with menus, inventory & pricing",
               "Automatic multi-language product descriptions",
               "Global logistics via pluggable 3PL connectors",
               "Multi-currency checkout with real-time FX",
               "Rural-ready, low-bandwidth vendor dashboard",
-              "MOQ, RFQ and quotation workflows for wholesalers",
             ].map((f) => (
               <li key={f} className="flex items-start gap-3">
                 <CheckCircle2 className="mt-0.5 h-5 w-5 text-success" />
@@ -58,11 +57,10 @@ function VendorPage() {
               <Label>Business type</Label>
               <Select defaultValue="restaurant">
                 <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="restaurant">Restaurant / Food hotel</SelectItem>
-                  <SelectItem value="grocery">Grocery / Provision shop</SelectItem>
-                  <SelectItem value="electronics">Electronics wholesale</SelectItem>
-                </SelectContent>
+              <SelectContent>
+                <SelectItem value="restaurant">Restaurant / Food hotel</SelectItem>
+                <SelectItem value="grocery">Grocery / Provision shop</SelectItem>
+              </SelectContent>
               </Select>
             </div>
             <div><Label>Contact email</Label><Input type="email" required /></div>

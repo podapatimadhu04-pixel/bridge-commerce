@@ -5,14 +5,14 @@ import { ProductCard } from "@/components/ProductCard";
 import { VENDORS, PRODUCTS, resolveProduct } from "@/lib/mock-data";
 import { useLocale } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Globe2, Languages, Wallet, Wifi, UtensilsCrossed, ShoppingBasket, Cpu, Search } from "lucide-react";
+import { ArrowRight, Globe2, Languages, Wallet, Wifi, UtensilsCrossed, ShoppingBasket, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "OrbitMarket — Discover local. Deliver global." },
-      { name: "description", content: "A global marketplace for restaurants, groceries and wholesale electronics, connecting urban and rural users in 7 languages and multi-currency." },
+      { name: "description", content: "A global marketplace for restaurants and groceries, connecting urban and rural users in 7 languages and multi-currency." },
     ],
   }),
   component: Home,
@@ -22,7 +22,6 @@ function Home() {
   const { t, location, country } = useLocale();
   const featuredVendors = VENDORS.slice(0, 6);
   const inRegion = (p: (typeof PRODUCTS)[number]) => resolveProduct(p, country).available;
-  const featuredElectronics = PRODUCTS.filter((p) => p.kind === "electronics").filter(inRegion).slice(0, 4);
   const featuredFood = PRODUCTS.filter((p) => p.kind === "food").filter(inRegion).slice(0, 4);
 
   return (
@@ -58,9 +57,6 @@ function Home() {
               </Button>
               <Button asChild size="lg" variant="secondary">
                 <Link to="/groceries"><ShoppingBasket className="mr-2 h-4 w-4" />{t("groceries")}</Link>
-              </Button>
-              <Button asChild size="lg" className="bg-brand text-brand-foreground hover:bg-brand/90">
-                <Link to="/electronics"><Cpu className="mr-2 h-4 w-4" />{t("electronics")}</Link>
               </Button>
             </div>
           </div>
@@ -100,10 +96,10 @@ function Home() {
         </div>
       </Section>
 
-      {/* Electronics wholesale */}
-      <Section title={t("electronics")} href="/electronics">
+      {/* Groceries */}
+      <Section title={t("groceries")} href="/groceries">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {featuredElectronics.map((p) => <ProductCard key={p.id} product={p} />)}
+          {PRODUCTS.filter((p) => p.kind === "grocery").filter(inRegion).slice(0, 4).map((p) => <ProductCard key={p.id} product={p} />)}
         </div>
       </Section>
 
@@ -114,7 +110,7 @@ function Home() {
             <div>
               <h2 className="text-3xl font-bold tracking-tight">Sell everywhere. Ship anywhere.</h2>
               <p className="mt-3 text-muted-foreground">
-                Onboard your restaurant, provision shop, or electronics wholesale in minutes. Reach customers from the next village to the next continent.
+                Onboard your restaurant or provision shop in minutes. Reach customers from the next village to the next continent.
               </p>
             </div>
             <div className="flex sm:justify-end">
