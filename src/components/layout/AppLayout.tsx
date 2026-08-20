@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { TopNav } from "./TopNav";
 import { CategorySidebar } from "./CategorySidebar";
 import { CookieConsent } from "@/components/CookieConsent";
+import { AiAssistant } from "@/components/AiAssistant";
 
 export function AppLayout({ children }: { children: ReactNode }) {
   return (
