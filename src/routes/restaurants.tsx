@@ -23,11 +23,14 @@ function RestaurantsPage() {
   const { t, country } = useLocale();
   const [cat, setCat] = useState<string>("All");
   const [q, setQ] = useState("");
+  const [ai, setAi] = useState<{ ids: string[]; summary: string } | null>(null);
   const vendors = VENDORS.filter((v) => v.type === "restaurant");
-  const products = PRODUCTS.filter((p) => p.kind === "food")
-    .filter((p) => resolveProduct(p, country).available)
-    .filter((p) => cat === "All" || p.category === cat)
-    .filter((p) => !q || p.name.toLowerCase().includes(q.toLowerCase()));
+  const base = PRODUCTS.filter((p) => p.kind === "food").filter((p) => resolveProduct(p, country).available);
+  const products = ai
+    ? (ai.ids.map((id) => base.find((p) => p.id === id)).filter(Boolean) as typeof base)
+    : base
+        .filter((p) => cat === "All" || p.category === cat)
+        .filter((p) => !q || p.name.toLowerCase().includes(q.toLowerCase()));
 
   return (
     <AppLayout>
