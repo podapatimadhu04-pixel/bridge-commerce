@@ -36,7 +36,7 @@ export const Route = createFileRoute("/api/chat")({
           ]
             .filter(Boolean)
             .join("\n"),
-          messages: convertToModelMessages(body.messages),
+          messages: await convertToModelMessages(body.messages),
           tools: {
             search_catalog: tool({
               description: "Search the OrbitMarket catalog for available products by keywords.",
