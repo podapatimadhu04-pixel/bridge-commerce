@@ -7,6 +7,7 @@ import { VENDORS, PRODUCTS, CATEGORIES, resolveProduct } from "@/lib/mock-data";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/lib/i18n";
+import { AiSearch } from "@/components/AiSearch";
 
 export const Route = createFileRoute("/restaurants")({
   head: () => ({
