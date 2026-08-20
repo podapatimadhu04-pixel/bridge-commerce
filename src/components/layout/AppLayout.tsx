@@ -25,6 +25,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         </div>
       </footer>
       <CookieConsent />
+      <AiAssistant />
     </div>
   );
 }
